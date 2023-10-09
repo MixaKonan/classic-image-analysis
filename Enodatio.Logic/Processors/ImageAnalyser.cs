@@ -189,25 +189,25 @@ public class ImageAnalyser
                     point = new Point(bitmap.Width - 1, bitmap.Height - 1);
                     break;
                 case > 0 and < 45:
-                    point = GetRightTopQuadrantPoint(bitmap.Width, bitmap.Height, degrees);
+                    point = GetRightTopPoint(bitmap.Width, bitmap.Height, degrees);
                     break;
                 case > 45 and < 90:
-                    point = GetTopRightQuadrantPoint(bitmap.Width, degrees);
+                    point = GetTopRightPoint(bitmap.Width, degrees);
                     break;
                 case > 90 and < 135:
-                    point = GetTopLeftQuadrantPoint(bitmap.Height, degrees);
+                    point = GetTopLeftPoint(bitmap.Height, degrees);
                     break;
                 case > 135 and < 180:
-                    point = GetLeftTopQuadrantPoint(bitmap.Height, degrees);
+                    point = GetLeftTopPoint(bitmap.Height, degrees);
                     break;
                 case > 180 and < 225:
-                    point = GetLeftBottomQuadrantPoint(bitmap.Height, degrees);
+                    point = GetLeftBottomPoint(bitmap.Height, degrees);
                     break;
                 case > 225 and < 270:
-                    point = GetBottomLeftQuadrantPoint(bitmap.Width, bitmap.Height, degrees);
+                    point = GetBottomLeftPoint(bitmap.Width, bitmap.Height, degrees);
                     break;
                 case > 270 and < 315:
-                    point = GetBottomRightQuadrantPoint(bitmap.Width, bitmap.Height, degrees);
+                    point = GetBottomRightPoint(bitmap.Width, bitmap.Height, degrees);
                     break;
                 case > 315 and < 360:
                     point = GetRightBottomQuadrantPoint(bitmap.Width, bitmap.Height, degrees);
@@ -225,7 +225,7 @@ public class ImageAnalyser
         return points;
     }
 
-    private static Point GetTopRightQuadrantPoint(int width, int degrees)
+    private static Point GetTopRightPoint(int width, int degrees)
     {
         var y = 1;
         var radian = degrees * Math.PI / 180;
@@ -237,8 +237,8 @@ public class ImageAnalyser
 
         return new Point(x, y);
     }
-    
-    private static Point GetTopLeftQuadrantPoint(int width, int degrees)
+
+    private static Point GetTopLeftPoint(int width, int degrees)
     {
         var y = 1;
         var radian = degrees * Math.PI / 180;
@@ -250,8 +250,8 @@ public class ImageAnalyser
 
         return new Point(x, y);
     }
-    
-    private static Point GetLeftTopQuadrantPoint(int height, int degrees)
+
+    private static Point GetLeftTopPoint(int height, int degrees)
     {
         var x = 1;
         var radian = degrees * Math.PI / 180;
@@ -264,7 +264,7 @@ public class ImageAnalyser
         return new Point(x, y);
     }
 
-    private static Point GetLeftBottomQuadrantPoint(int height, int degrees)
+    private static Point GetLeftBottomPoint(int height, int degrees)
     {
         var x = 1;
         var radian = degrees * Math.PI / 180;
@@ -277,7 +277,7 @@ public class ImageAnalyser
         return new Point(x, y);
     }
 
-    private static Point GetBottomLeftQuadrantPoint(int width, int height, int degrees)
+    private static Point GetBottomLeftPoint(int width, int height, int degrees)
     {
         var y = height - 1;
         var radian = degrees * Math.PI / 180;
@@ -289,8 +289,8 @@ public class ImageAnalyser
 
         return new Point(x, y);
     }
-    
-    private static Point GetBottomRightQuadrantPoint(int width, int height, int degrees)
+
+    private static Point GetBottomRightPoint(int width, int height, int degrees)
     {
         var y = height - 1;
         var radian = degrees * Math.PI / 180;
@@ -302,21 +302,21 @@ public class ImageAnalyser
 
         return new Point(x, y);
     }
-    
+
     private static Point GetRightBottomQuadrantPoint(int width, int height, int degrees)
     {
         var x = width - 1;
         var radian = degrees * Math.PI / 180;
 
         var sin = Math.Sin(radian);
-        
+
         var bound = (int) (Sin45 * height);
         var y = Map((int) (sin * height), -bound, 0, height - 1, height / 2);
 
         return new Point(x, y);
     }
-    
-    private static Point GetRightTopQuadrantPoint(int width, int height, int degrees)
+
+    private static Point GetRightTopPoint(int width, int height, int degrees)
     {
         var x = width - 1;
         var radian = degrees * Math.PI / 180;
