@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enodatio.UI", "Enodatio.UI\Enodatio.UI.csproj", "{53D6A5F3-0FE5-459A-843F-74D9A14FB013}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enodatio.Logic", "Enodatio.Logic\Enodatio.Logic.csproj", "{D7EC578D-92F4-45EE-A4BE-804C8954368D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53D6A5F3-0FE5-459A-843F-74D9A14FB013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D6A5F3-0FE5-459A-843F-74D9A14FB013}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D6A5F3-0FE5-459A-843F-74D9A14FB013}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D6A5F3-0FE5-459A-843F-74D9A14FB013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7EC578D-92F4-45EE-A4BE-804C8954368D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7EC578D-92F4-45EE-A4BE-804C8954368D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7EC578D-92F4-45EE-A4BE-804C8954368D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7EC578D-92F4-45EE-A4BE-804C8954368D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
