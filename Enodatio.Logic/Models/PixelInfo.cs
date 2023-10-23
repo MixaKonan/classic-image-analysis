@@ -13,16 +13,14 @@ public class PixelInfo
     public int Y { get; }
 
     public Color Color { get; }
+    
+    public double GrayScaleIntensity { get; }
 
     public PixelInfo(int x, int y, Color color)
     {
         X = x;
         Y = y;
         Color = color;
-    }
-
-    public double GetGrayscaleIntensity()
-    {
-        return (RedGrayscaleWeight * this.Color.R) + (GreenGrayscaleWeight * this.Color.G) + (BlueGrayscaleWeight * this.Color.B);
+        GrayScaleIntensity = (RedGrayscaleWeight * color.R) + (GreenGrayscaleWeight * color.G) + (BlueGrayscaleWeight * color.B);
     }
 }

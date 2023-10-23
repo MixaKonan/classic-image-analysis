@@ -52,11 +52,9 @@ public class ImageAnalyser
 
         foreach (var pixel in pixels)
         {
-            var pixelIntensity = pixel.GetGrayscaleIntensity();
-
             foreach (var interval in intervals)
             {
-                if (pixelIntensity > interval.Start.Value && pixelIntensity <= interval.End.Value)
+                if (pixel.GrayScaleIntensity > interval.Start.Value && pixel.GrayScaleIntensity <= interval.End.Value)
                 {
                     pixelCounts[interval] = pixelCounts[interval] + 1;
                 }
@@ -213,7 +211,7 @@ public class ImageAnalyser
                     point = GetRightBottomQuadrantPoint(bitmap.Width, bitmap.Height, degrees);
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception($"Unable to define appropriate case for {degrees} degrees.");
             }
 
             points[index] = point;
@@ -233,7 +231,7 @@ public class ImageAnalyser
         var cos = Math.Cos(radian);
 
         var bound = (int) (Cos45 * width);
-        var x = Map((int) (cos * width), 0, bound, width / 2, width - 1);
+        var x = Utils.Map((int) (cos * width), 0, bound, width / 2, width - 1);
 
         return new Point(x, y);
     }
@@ -246,7 +244,7 @@ public class ImageAnalyser
         var cos = Math.Cos(radian);
 
         var bound = (int) (Cos45 * width);
-        var x = Map((int) (cos * width), 0, -bound, width / 2, 1);
+        var x = Utils.Map((int) (cos * width), 0, -bound, width / 2, 1);
 
         return new Point(x, y);
     }
@@ -259,7 +257,7 @@ public class ImageAnalyser
         var sin = Math.Sin(radian);
 
         var bound = (int) (Sin45 * height);
-        var y = Map((int) (sin * height), bound, 0, 1, height / 2);
+        var y = Utils.Map((int) (sin * height), bound, 0, 1, height / 2);
 
         return new Point(x, y);
     }
@@ -272,7 +270,7 @@ public class ImageAnalyser
         var sin = Math.Sin(radian);
 
         var bound = (int) (Sin45 * height);
-        var y = Map((int) (sin * height), 0, -bound, height / 2, height - 1);
+        var y = Utils.Map((int) (sin * height), 0, -bound, height / 2, height - 1);
 
         return new Point(x, y);
     }
@@ -285,7 +283,7 @@ public class ImageAnalyser
         var cos = Math.Cos(radian);
 
         var bound = (int) (Cos45 * width);
-        var x = Map((int) (cos * width), -bound, 0, 1, width / 2);
+        var x = Utils.Map((int) (cos * width), -bound, 0, 1, width / 2);
 
         return new Point(x, y);
     }
@@ -298,7 +296,7 @@ public class ImageAnalyser
         var cos = Math.Cos(radian);
 
         var bound = (int) (Cos45 * width);
-        var x = Map((int) (cos * width), 0, bound, width / 2, width - 1);
+        var x = Utils.Map((int) (cos * width), 0, bound, width / 2, width - 1);
 
         return new Point(x, y);
     }
@@ -311,7 +309,7 @@ public class ImageAnalyser
         var sin = Math.Sin(radian);
 
         var bound = (int) (Sin45 * height);
-        var y = Map((int) (sin * height), -bound, 0, height - 1, height / 2);
+        var y = Utils.Map((int) (sin * height), -bound, 0, height - 1, height / 2);
 
         return new Point(x, y);
     }
@@ -324,13 +322,8 @@ public class ImageAnalyser
         var sin = Math.Sin(radian);
 
         var bound = (int) (Sin45 * height);
-        var y = Map((int) (sin * height), 0, bound, height / 2, 1);
+        var y = Utils.Map((int) (sin * height), 0, bound, height / 2, 1);
 
         return new Point(x, y);
-    }
-
-    private static int Map(int source, int sourceFrom, int sourceTo, int targetFrom, int targetTo)
-    {
-        return targetFrom + (source - sourceFrom) * (targetTo - targetFrom) / (sourceTo - sourceFrom);
     }
 }

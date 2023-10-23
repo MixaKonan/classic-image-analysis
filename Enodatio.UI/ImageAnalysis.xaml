@@ -4,7 +4,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
-        Title="ImageAnalysis" Height="450" Width="800">
+        Title="ImageAnalysis"
+        WindowState="Maximized"
+        Height="450"
+        Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -69,42 +72,42 @@
                         BorderThickness="1"
                         Margin="5"
                         Name="Configuration">
-                    <StackPanel Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Vertical">
 
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Intensity Span (1-255):" />
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Intensity Span (1-255):" />
 
-                            <TextBox TextAlignment="Right"
-                                     Width="40"
-                                     Height="20"
-                                     Margin="5 0 0 0"
-                                     Name="IntensitySpan"
-                                     Text="{Binding Path=IntensitySpan, Mode=TwoWay}"
-                                     PreviewTextInput="IntensitySpan_OnPreviewTextInput" />
+                                <TextBox TextAlignment="Right"
+                                         Width="40"
+                                         Height="20"
+                                         Margin="5 0 0 0"
+                                         Name="IntensitySpan"
+                                         Text="{Binding Path=IntensitySpan, Mode=TwoWay}"
+                                         PreviewTextInput="IntensitySpan_OnPreviewTextInput" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Degrees:" />
 
-                            <Button Content="Submit"
-                                    Width="50"
-                                    Height="20"
-                                    Margin="10 0 0 0"
-                                    Click="SubmitIntensitySpan_OnClickAsync" />
+                                <TextBox TextAlignment="Right"
+                                         Width="40"
+                                         Height="20"
+                                         Margin="5 0 0 0"
+                                         Name="Degrees"
+                                         Text="{Binding Path=Degrees, Mode=TwoWay}" />
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Degrees:" />
+                        <Button Grid.Column="1"
+                                Content="Apply Configurations"
+                                Margin="10 10 10 10"
+                                IsEnabled="{Binding IsImageSet, Mode=OneWay}"
+                                Click="ApplyConfigurations_OnClickAsync" />
+                    </Grid>
 
-                            <TextBox TextAlignment="Right"
-                                     Width="40"
-                                     Height="20"
-                                     Margin="5 0 0 0"
-                                     Name="Degrees"
-                                     Text="{Binding Path=Degrees, Mode=TwoWay}" />
-
-                            <Button Content="Submit"
-                                    Width="50"
-                                    Height="20"
-                                    Margin="10 0 0 0"
-                                    Click="SubmitDegrees_OnClickAsync" />
-                        </StackPanel>
-                    </StackPanel>
                 </Border>
             </Grid>
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
@@ -129,8 +132,16 @@
                                 Margin="5"
                                 Visibility="Collapsed"
                                 Name="BeamGraphsBorder">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Name="BeamGraphsPanel">
-                            </StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <ComboBox Name="BeamSelectComboBox" HorizontalAlignment="Center" Height="20" Width="80"
+                                          Margin="5 5 5 5" SelectionChanged="BeamSelectComboBox_OnSelectionChanged" />
+                                <StackPanel Grid.Row="1" Orientation="Vertical" Margin="10 10 10 10"
+                                            HorizontalAlignment="Center" Name="BeamGraphsPanel" />
+                            </Grid>
                         </Border>
                     </StackPanel>
                 </Grid>
