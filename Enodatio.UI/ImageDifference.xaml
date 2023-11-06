@@ -113,7 +113,7 @@
                             Width="100"
                             Height="20"
                             Margin="0 5 0 5"
-                            IsEnabled="{Binding IsDifferenceImageSet, Mode=OneWay}"
+                            IsEnabled="{Binding IsDifferenceImageSet}"
                             Name="SaveDifferenceButton"
                             Click="SaveDifference_OnClickAsync" />
                 </Grid>

@@ -71,7 +71,16 @@ public class ImageDifferenceViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool IsDifferenceImageSet => Difference is not null;
+    private bool _isDifferenceImageSet = false;
+    public bool IsDifferenceImageSet
+    {
+        get => _isDifferenceImageSet;
+        set
+        {
+            _isDifferenceImageSet = value;
+            OnPropertyChanged();
+        }
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -93,5 +102,6 @@ public class ImageDifferenceViewModel : INotifyPropertyChanged
         First = null;
         Second = null;
         Difference = null;
+        IsDifferenceImageSet = false;
     }
 }

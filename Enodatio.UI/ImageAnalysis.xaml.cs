@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Enodatio.Logic;
 using Enodatio.Logic.Models;
 using Enodatio.Logic.Processors;
 using Enodatio.UI.Extensions;
@@ -15,9 +17,11 @@ using Enodatio.UI.Services;
 using Enodatio.UI.ViewModels;
 using Microsoft.Win32;
 using ScottPlot;
+using Color = System.Drawing.Color;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Image = System.Windows.Controls.Image;
 using Orientation = System.Windows.Controls.Orientation;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using VerticalAlignment = System.Windows.VerticalAlignment;
 
 namespace Enodatio.UI;
@@ -87,11 +91,11 @@ public partial class ImageAnalysis : Window
         BeamSelectComboBox.Items.Clear();
         await UpdateBeamInfoAsync();
     }
-    
+
     private async void ApplyConfigurations_OnClickAsync(object sender, RoutedEventArgs e)
     {
         var viewModel = (ImageAnalysisViewModel) DataContext;
-        
+
         var value = byte.Parse(IntensitySpan.Text);
 
         if (value == 1)
@@ -100,9 +104,9 @@ public partial class ImageAnalysis : Window
         }
 
         viewModel.IntensitySpan = value;
-        
+
         var updatePlotsTask = Task.WhenAll(UpdatePixelCountPlotsAsync(viewModel), UpdateBeamInfoAsync());
-        
+
         BeamGraphsPanel.Children.Clear();
         BeamSelectComboBox.Items.Clear();
         BeamImages.Clear();
@@ -135,6 +139,7 @@ public partial class ImageAnalysis : Window
     {
         var viewModel = (ImageAnalysisViewModel) DataContext;
         var (newImage, beams) = await DrawBeamsAsync(viewModel.OriginalImage!, viewModel.Degrees);
+        var resultingImageIntensities = new List<int[]>();
 
         for (var index = 0; index < beams.Count; index++)
         {
@@ -150,23 +155,54 @@ public partial class ImageAnalysis : Window
                 Source = GetBeamPixelCountGraph(xLabels, values)
             };
 
+            var mappedCumulativeValues = GetMappedCumulativeValues(values);
+            resultingImageIntensities.Add(mappedCumulativeValues.Select(value => (int) Utils.Map(value, 0, mappedCumulativeValues.Max(), 0, 255)).ToArray());
+
             var cumulativeBeamPixelCountFigure = new Image()
             {
-                Source = GetCumulativeBeamPixelCountGraph(xLabels, values)
+                Source = GetCumulativeBeamPixelCountGraph(xLabels, mappedCumulativeValues)
             };
 
-            var resultingImage = new Image()
-            {
-                Source = GetCumulativePixelCountImage(600, 300, beamPixelIntensities)
-            };
-
-            BeamImages.Add(label, new List<Image>() {beamPixelCountGraph, cumulativeBeamPixelCountFigure, resultingImage});
+            BeamImages.Add(label, new List<Image>() {beamPixelCountGraph, cumulativeBeamPixelCountFigure});
             BeamSelectComboBox.Items.Add(label);
         }
 
         viewModel.Image = newImage;
+        viewModel.CumulativePixelCountImage = GetCumulativePixelCountImage(resultingImageIntensities);
         BeamSelectComboBox.SelectedItem = BeamSelectComboBox.Items[0];
         BeamGraphsBorder.Visibility = Visibility.Visible;
+    }
+
+    private static BitmapImage GetCumulativePixelCountImage(List<int[]> resultingImageIntensities)
+    {
+        var bitmap = new Bitmap(resultingImageIntensities.Count, resultingImageIntensities[0].Length);
+        for (var i = 0; i < resultingImageIntensities.Count; i++)
+        {
+            var values = resultingImageIntensities[i];
+            for (var j = 0; j < values.Length; j++)
+            {
+                var value = values[j];
+                bitmap.SetPixel(i, j, Color.FromArgb(value, value, value));
+            }
+        }
+        
+        return bitmap.ToGrayScaleBitmapImage();
+    }
+
+    private static double[] GetMappedCumulativeValues(double[] intensities, double? maxValue = null)
+    {
+        var values = new double[intensities.Length];
+        var cumulative = 0.0;
+        for (var index = 0; index < intensities.Length; index++)
+        {
+            cumulative += intensities[index];
+            values[index] = cumulative;
+        }
+
+        var cap = maxValue ?? cumulative;
+
+        var mappedValues = values.Select(value => Utils.Map(value, 0, cap, 0, 1)).ToArray();
+        return mappedValues;
     }
 
     private async Task<(BitmapImage, List<Beam>)> DrawBeamsAsync(BitmapImage originalImage, int degrees)
@@ -216,8 +252,10 @@ public partial class ImageAnalysis : Window
             values[index] = cumulative;
         }
 
+        var mappedValues = values.Select(value => Utils.Map(value, 0, cumulative, 0, 1)).ToArray();
+
         var plot = new Plot();
-        plot.AddBar(values);
+        plot.AddBar(mappedValues);
 
         plot.YAxis.Label("Intensity Sum");
 
@@ -227,56 +265,6 @@ public partial class ImageAnalysis : Window
         plot.XAxis.Label("Pixel Intensity");
 
         return plot.Render().ToBitmapImage();
-    }
-
-    private static BitmapImage GetCumulativePixelCountImage(int width, int height, Dictionary<Range, int> beamPixelIntensityPixelCounts)
-    {
-        var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-        var imagePixels = (width - 1) * (height - 1);
-        var pixelProportions = GetPixelProportions(imagePixels, beamPixelIntensityPixelCounts);
-
-        var nonZeroPixels = pixelProportions.Where((pair, _) => pair.Value != 0).ToList();
-
-        var rangeIndex = 0;
-        var pixelIndex = 0;
-
-        var (range, pixelCount) = nonZeroPixels[rangeIndex];
-
-        for (var column = 0; column < width - 1; column++)
-        {
-            for (var row = 0; row < height - 1; row++)
-            {
-                if (pixelIndex >= pixelCount && rangeIndex != nonZeroPixels.Count - 1)
-                {
-                    (range, pixelCount) = nonZeroPixels[++rangeIndex];
-                }
-
-                bitmap.SetPixel(column, row, Color.FromArgb(range.End.Value, range.End.Value, range.End.Value));
-                pixelIndex++;
-            }
-        }
-
-        return bitmap.ToGrayScaleBitmapImage();
-    }
-
-    private static Dictionary<Range, int> GetPixelProportions(int imagePixelCount, Dictionary<Range, int> beamPixelIntensityPixelCounts)
-    {
-        var cumulativeValues = new Dictionary<Range, double>(beamPixelIntensityPixelCounts.Count);
-        var accumulator = 0;
-        foreach (var (range, count) in beamPixelIntensityPixelCounts)
-        {
-            accumulator += count;
-            cumulativeValues.Add(range, accumulator);
-        }
-
-        var mappedPixelCounts = new Dictionary<Range, int>();
-        var cumulativeSum = cumulativeValues.Values.Sum();
-        foreach (var (range, value) in cumulativeValues)
-        {
-            mappedPixelCounts.Add(range, (int) Math.Round(imagePixelCount * (value / cumulativeSum)));
-        }
-
-        return mappedPixelCounts;
     }
 
     private static BitmapImage GetBeamPixelCountGraph(string[] xLabels, double[] intensities)
@@ -290,16 +278,8 @@ public partial class ImageAnalysis : Window
         return plot.Render().ToBitmapImage();
     }
 
-    private static BitmapImage GetCumulativeBeamPixelCountGraph(string[] labels, double[] intensitySums)
+    private static BitmapImage GetCumulativeBeamPixelCountGraph(string[] labels, double[] values)
     {
-        var values = new double[intensitySums.Length];
-        var cumulative = 0.0;
-        for (var index = 0; index < intensitySums.Length; index++)
-        {
-            cumulative += intensitySums[index];
-            values[index] = cumulative;
-        }
-
         var plot = new Plot();
         plot.AddBar(values);
         plot.YAxis.Label("Cumulative Pixel Intensity Sum Under a Beam");

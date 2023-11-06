@@ -87,6 +87,7 @@ public partial class ImageDifference : Window
         try
         {
             var differenceImage = await GetDifferenceAsync(viewModel);
+            viewModel.IsDifferenceImageSet = true;
             viewModel.Difference = differenceImage;
         }
         catch (Exception)
@@ -114,7 +115,7 @@ public partial class ImageDifference : Window
             var second = new Bitmap(secondOutStream);
 
             var difference = _differenceProcessor.GetDifference(first, second, viewModel.Threshold);
-
+            
             return difference.ToBitmapImage();
         });
     }

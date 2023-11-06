@@ -93,6 +93,23 @@ public class ImageAnalysisViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    
+    private BitmapImage? _cumulativePixelCountImage;
+
+    public BitmapImage? CumulativePixelCountImage
+    {
+        get => _cumulativePixelCountImage;
+        set
+        {
+            _cumulativePixelCountImage = value;
+            if (_cumulativePixelCountImage is not null)
+            {
+                _cumulativePixelCountImage.Freeze();
+            }
+
+            OnPropertyChanged();
+        }
+    }
 
     private byte _intensitySpan = 15;
 

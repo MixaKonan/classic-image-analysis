@@ -48,7 +48,7 @@
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 5">
                             <StackPanel.Resources>
                                 <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Margin" Value="5 0  5 0" />
+                                    <Setter Property="Margin" Value="5 0 5 0" />
                                 </Style>
                             </StackPanel.Resources>
                             <Button Content="Upload"
@@ -122,10 +122,11 @@
                                 Margin="5"
                                 Visibility="Collapsed"
                                 Name="PixelCountGraphsBorder">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Image Source="{Binding PixelCountFigure}" />
-                                <Image Source="{Binding CumulativePixelCountFigure}" />
-                            </StackPanel>
+                            <DockPanel HorizontalAlignment="Center">
+                                <Image DockPanel.Dock="Top" Source="{Binding PixelCountFigure}" />
+                                <Image DockPanel.Dock="Top" Source="{Binding CumulativePixelCountFigure}" />
+                                <Image DockPanel.Dock="Bottom" Source="{Binding CumulativePixelCountImage}" Stretch="Fill" StretchDirection="Both" Width="300" Height="300"/>
+                            </DockPanel>
                         </Border>
                         <Border BorderBrush="Black"
                                 BorderThickness="1"

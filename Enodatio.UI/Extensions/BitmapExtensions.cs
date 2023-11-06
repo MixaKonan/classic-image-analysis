@@ -42,7 +42,6 @@ public static class BitmapExtensions
 
         var data = result.LockBits(new Rectangle(0, 0, result.Width, result.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
 
-        // Copy the bytes from the image into a byte array
         var bytes = new byte[data.Height * data.Stride];
         Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
 
@@ -57,7 +56,6 @@ public static class BitmapExtensions
             }
         }
 
-        // Copy the bytes from the byte array into the image
         Marshal.Copy(bytes, 0, data.Scan0, bytes.Length);
 
         result.UnlockBits(data);
